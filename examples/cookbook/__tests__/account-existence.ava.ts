@@ -1,7 +1,7 @@
 import { workspace } from './main.ava'
-import { fork, spawn, exec } from 'child_process'
-import { Stream, Writable } from 'stream'
-workspace.test('check if account exists', async (test, { root }) => {
+import { fork, exec } from 'child_process'
+import { providers } from 'near-api-js'
+workspace.test('check account existence', async (test, { root }) => {
     test.log('todo')
 
     let pwd = exec('pwd', (error, stdout, stderr) => {
@@ -14,54 +14,40 @@ workspace.test('check if account exists', async (test, { root }) => {
     // pwd.on('exit', (code, signal)=>{console.log(`pwd exit, code: ${code}, signal: ${signal}`)})
     // pwd.on('close', (code, signal)=>{console.log(`pwd exit, code: ${code}, signal: ${signal}`)})
 
-    console.log('trying to run a js script with node...')
+    let child = fork('utils/check-account-existence.js', [], { stdio: 'pipe'});
+    console.log('child connected: ' + child.connected)
+    child.on('spawn', ()=>{console.log("child  spawned")})
+    child.on('error', (err)=>{console.log(`child  error: ${err}`)})
 
-    let child = fork('child.js', ["world"], { stdio: 'pipe'});
-    console.log('child node connected: ' + child.connected)
-    child.on('spawn', ()=>{console.log("child node spawned")})
-    child.on('error', (err)=>{console.log(`child node error: ${err}`)})
+    child.on('exit', (code, signal)=>{console.log(`child exit, code: ${code}, signal: ${signal}`)})
+    child.on('close', (code, signal)=>{console.log(`child closed, code: ${code}, signal: ${signal}`)})
 
-    child.on('exit', (code, signal)=>{console.log(`child node exit, code: ${code}, signal: ${signal}`)})
-    child.on('close', (code, signal)=>{console.log(`child node closed, code: ${code}, signal: ${signal}`)})
-
-    child.on('disconnect', ()=>{console.log('child node disconnected')})
+    child.on('disconnect', ()=>{console.log('child disconnected');})
 
     child.stderr.on('data', data =>{
-        console.log(`stderr from child node: ${data}`)
+        console.log(`stderr from child: ${data}`)
     })
 
     child.stdout.on('data', data =>{
-        console.log(`stdout from child node: ${data}`)
+        console.log(`stdout from child: ${data}`)
     })
 
-    return;
+    sleep(15000)
+})
 
-    let p = fork("__tests__/hello.js", ["world"], { stdio: 'pipe' })
-    console.log(`connected: ${p.connected}`)
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
 
-    p.on('spawn', () => {
-        console.log('spawn on spawn');
-    });
 
-    p.on('error', function (err) {
-        console.log(`Error in child process: ${err}`)
-    });
-
-    //p.stdout.pipe(process.stdout)
-
-    p.stdout.on('data', (data) => {
-        console.log(`data from stdout of the child process: ${data}`)
-    })
-
-    p.stderr.on('data', (err) => {
-        console.log(`error data from child process: ${err}`)
-    })
-
-    p.stdin.on('data', (data) => {
-        console.log(`data from stdin of the child process: ${data}`)
-    })
-
-    p.on('exit', (code) => {
-        console.log(`child process finished, code: ${code}`)
-    })
+workspace.test('check account existence (require)', async (test, { root })=>{
+    // let cae = require('../utils/check-account-existence')
+    // //won't work on another machine/session
+    // //need to know how to get node's local url
+    // cae.provider = new providers.JsonRpcProvider("http://localhost:3792/") 
+    // await cae.accountExists();
 })

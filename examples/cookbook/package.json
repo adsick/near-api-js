@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "near-workspaces-ava"
   },
   "author": "",
   "license": "ISC",
@@ -12,5 +12,8 @@
     "chalk": "^4.1.1",
     "homedir": "^0.6.0",
     "near-api-js": "file:../../"
+  },
+  "devDependencies": {
+    "near-workspaces-ava": "^1.0.0"
   }
 }
