@@ -1,6 +1,7 @@
 import { workspace } from './main.ava'
 import { fork, exec } from 'child_process'
-import { providers } from 'near-api-js'
+import { providers} from 'near-api-js'
+
 workspace.test('check account existence', async (test, { root }) => {
     test.log('todo')
 
@@ -44,10 +45,17 @@ function sleep(milliseconds) {
   }
 
 
-workspace.test('check account existence (require)', async (test, { root })=>{
-    // let cae = require('../utils/check-account-existence')
-    // //won't work on another machine/session
-    // //need to know how to get node's local url
-    // cae.provider = new providers.JsonRpcProvider("http://localhost:3792/") 
-    // await cae.accountExists();
+workspace.test('check account existence (require)', async (test, { root, alice })=>{
+    const config = workspace["container"]["config"];
+    // console.log(config)
+
+    const module = require('../utils/check-account-existence')
+    module.provider = new providers.JsonRpcProvider(config.rpcAddr);
+    const { accountExists } = module
+
+    test.false(await accountExists("nonexistentaccount.testnet"))
+    test.log("check if root account exists")
+    test.true(await accountExists(root.accountId))
+    test.log("check if alice account exists")
+    test.true(await accountExists(alice.accountId))
 })

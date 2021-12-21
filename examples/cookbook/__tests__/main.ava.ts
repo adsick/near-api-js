@@ -1,4 +1,6 @@
-import { Workspace, NearAccount, BN, toYocto, MAINNET_RPC_ADDR, TESTNET_RPC_ADDR, SandboxManager, urlConfigFromNetwork } from 'near-workspaces-ava';
+import { Workspace, NearAccount, BN, toYocto, urlConfigFromNetwork, WorkspaceContainer, Config } from 'near-workspaces-ava';
+
+// export let WC = null;
 
 async function initWorkspace(root: NearAccount) {
     const workspace = Workspace.init();
