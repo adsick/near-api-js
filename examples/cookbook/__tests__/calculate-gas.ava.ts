@@ -1,14 +1,11 @@
-import { workspace } from './main.ava'
-import { fork, exec } from 'child_process'
-import { providers } from 'near-api-js'
-import { KeyStore } from 'near-workspaces-ava';
+import { workspace } from './utils'
 import { keyStores } from 'near-workspaces/node_modules/near-api-js';
 import { InMemoryKeyStore } from 'near-workspaces/node_modules/near-api-js/lib/key_stores';
 
-workspace.test('calculate gas', async (test, { root, alice })=>{
-    const status_message = await root.createAndDeploy('status-message', '__tests__/res/status_message.wasm');
+workspace.test('calculate gas', async (test, { root, alice, status_message })=>{
+   
     // console.log(status_message)
-    const config = workspace["container"]["config"];
+    const config = status_message["manager"]["config"];
     // console.log(config)
     
     const module = require('../utils/calculate-gas.js')
@@ -23,22 +20,28 @@ workspace.test('calculate gas', async (test, { root, alice })=>{
         message: "Working on tests for near-api-js...",
     };
 
-    let kp = await alice.getKey();
-
     let ks = new keyStores.InMemoryKeyStore()
-    ks.setKey('sandbox', alice.accountId, kp);
-
-    console.log(ks)
+    await ks.setKey('sandbox', alice.accountId, await alice.getKey());
 
     module.config.keyStore = ks
     module.config.networkId = 'sandbox'
     module.config.nodeUrl = config.rpcAddr 
 
-    console.log(await calculateGas(CONTRACT_ID, METHOD_NAME, args, ATTACHED_DEPOSIT))
+    console.log(module.config)
 
-    // test.false(await accountExists("nonexistentaccount.testnet"))
-    // test.log("check if root account exists")
-    // test.true(await accountExists(root.accountId))
-    // test.log("check if alice account exists")
-    // test.true(await accountExists(alice.accountId))
+    console.log(await calculateGas(CONTRACT_ID, METHOD_NAME, args, ATTACHED_DEPOSIT))
 })
+
+//investigate, (calculate-gas.js:35)
+/*
+ Rejected promise returned by test. Reason:
+
+  Error (BorshError) {
+    fieldPath: [
+      'publicKey',
+    ],
+    originalMessage: 'Class PublicKey is missing in schema',
+    message: 'Class PublicKey is missing in schema: publicKey',
+  }
+
+*/

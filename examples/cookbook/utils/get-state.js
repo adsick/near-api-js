@@ -2,22 +2,47 @@
 // up an account. (View methods only)
 const { providers } = require("near-api-js");
 //network config (replace testnet with mainnet or betanet)
-const provider = new providers.JsonRpcProvider(
+exports.provider = new providers.JsonRpcProvider(
   "https://rpc.testnet.near.org"
 );
 
-getState();
+async function getState(account_id, method_name, args_base64) {
 
-async function getState() {
-  const rawResult = await provider.query({
+  console.log('trying to query...')
+  console.log(exports.provider)
+
+  const view_query = {
     request_type: "call_function",
-    account_id: "guest-book.testnet",
-    method_name: "getMessages",
-    args_base64: "e30=",
+    account_id: account_id || "guest-book.testnet",
+    method_name: method_name || "getMessages",
+    args_base64: args_base64 || "e30=", //"{}"
     finality: "optimistic",
-  });
+  };
+
+  // const view_query = {
+  //   request_type: "view_account",
+  //   account_id: account_id,
+  //   finality: "final",
+  // };
+
+  console.log(view_query)
+
+  let rawResult;
+
+  try {
+    rawResult = await exports.provider.query(view_query)
+
+  } catch(e){
+    console.log('ERROR: ' + e)
+  }
+
+  console.log('finished query')
 
   // format result
-  const res = JSON.parse(Buffer.from(rawResult.result).toString());
-  console.log(res);
+  const result = JSON.parse(Buffer.from(rawResult.result).toString());
+  return {result, logs: rawResult.logs};
 }
+
+// getState();
+
+exports.getState = getState;
