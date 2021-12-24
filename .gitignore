@@ -19,3 +19,6 @@ package\-lock\.json
 
 # Generated typedoc files
 docs/
+
+# lockfiles
+**/*.lock
