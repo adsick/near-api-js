@@ -24,7 +24,7 @@ exports.config = {
 };
 
 //usage
-//calculateGas(CONTRACT_ID, METHOD_NAME, args, ATTACHED_DEPOSIT);
+calculateGas(exports.CONTRACT_ID, exports.METHOD_NAME, args, exports.ATTACHED_DEPOSIT);
 
 async function calculateGas(contractId, methodName, args, depositAmount) {
   console.log('trying to connect with nodeUrl: ' + exports.config.nodeUrl)

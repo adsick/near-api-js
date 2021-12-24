@@ -1,6 +1,5 @@
 import { workspace } from './utils'
 import { keyStores } from 'near-workspaces/node_modules/near-api-js';
-import { InMemoryKeyStore } from 'near-workspaces/node_modules/near-api-js/lib/key_stores';
 
 workspace.test('calculate gas', async (test, { root, alice, status_message })=>{
    
