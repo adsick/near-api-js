@@ -8,16 +8,16 @@ const CREDENTIALS_DIR = ".near-credentials";
 const credentialsPath = path.join(homedir, CREDENTIALS_DIR);
 const keyStore = new keyStores.UnencryptedFileSystemKeyStore(credentialsPath);
 
-const config = {
+exports.config = {
     keyStore,
     networkId: "testnet",
     nodeUrl: "https://rpc.testnet.near.org",
 };
 
-verifySignature();
+// verifySignature(ACCOUNT_ID);
 
-async function verifySignature() {
-    const keyPair = await keyStore.getKey(config.networkId, ACCOUNT_ID);
+async function verifySignature(account_id) {
+    const keyPair = await exports.config.keyStore.getKey(exports.config.networkId, account_id);
     const msg = Buffer.from("hi");
 
     const { signature } = keyPair.sign(msg);
@@ -28,3 +28,5 @@ async function verifySignature() {
 
     return isValid;
 }
+
+exports.verifySignature = verifySignature
