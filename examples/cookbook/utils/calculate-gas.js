@@ -31,7 +31,10 @@ async function calculateGas(contractId, methodName, args, depositAmount) {
   const near = await connect(exports.config);
   console.log('connected, getting ' + exports.ACCOUNT_ID + ' account')
   const account = await near.account(exports.ACCOUNT_ID);
-  console.log('doing a function call')
+
+  console.log('doing a function call...')
+  // this will fail with some weird borsh error
+  // ...Class PublicKey is missing in schema: publicKey
   const result = await account.functionCall({
     contractId,
     methodName,
