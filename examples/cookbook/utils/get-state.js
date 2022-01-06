@@ -19,19 +19,12 @@ async function getState(account_id, method_name, args_base64) {
     finality: "optimistic",
   };
 
-  // const view_query = {
-  //   request_type: "view_account",
-  //   account_id: account_id,
-  //   finality: "final",
-  // };
-
   console.log(view_query)
 
   let rawResult;
 
   try {
     rawResult = await exports.provider.query(view_query)
-
   } catch(e){
     console.log('ERROR: ' + e)
   }
