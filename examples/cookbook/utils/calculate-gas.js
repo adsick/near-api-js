@@ -24,17 +24,13 @@ exports.config = {
 };
 
 //usage
+// calculateGas(exports.CONTRACT_ID, exports.METHOD_NAME, args, exports.ATTACHED_DEPOSIT);
 calculateGas(exports.CONTRACT_ID, exports.METHOD_NAME, args, exports.ATTACHED_DEPOSIT);
 
 async function calculateGas(contractId, methodName, args, depositAmount) {
-  console.log('trying to connect with nodeUrl: ' + exports.config.nodeUrl)
   const near = await connect(exports.config);
-  console.log('connected, getting ' + exports.ACCOUNT_ID + ' account')
   const account = await near.account(exports.ACCOUNT_ID);
 
-  console.log('doing a function call...')
-  // this will fail with some weird borsh error
-  // ...Class PublicKey is missing in schema: publicKey
   const result = await account.functionCall({
     contractId,
     methodName,
@@ -46,18 +42,20 @@ async function calculateGas(contractId, methodName, args, depositAmount) {
   const { totalGasBurned, totalTokensBurned } = result.receipts_outcome.reduce(
     (acc, receipt) => {
       acc.totalGasBurned += receipt.outcome.gas_burnt;
-      acc.totalTokensBurned += utils.format.formatNearAmount(
+      acc.totalTokensBurned += 1.0 * utils.format.formatNearAmount( //note, add more idiomatic number parsing
         receipt.outcome.tokens_burnt
       );
       return acc;
     },
     {
       totalGasBurned: result.transaction_outcome.outcome.gas_burnt,
-      totalTokensBurned: utils.format.formatNearAmount(
+      totalTokensBurned: 1.0 * utils.format.formatNearAmount(
         result.transaction_outcome.outcome.tokens_burnt
       ),
     }
   );
+
+    console.log(typeof(totalTokensBurned), ' : ', totalTokensBurned);
 
   console.log(chalk`{white ------------------------------------------------------------------------ }`)
   console.log(chalk`{bold.green RESULTS} {white for: [ {bold.blue ${exports.METHOD_NAME}} ] called on contract: [ {bold.blue ${exports.CONTRACT_ID}} ]}` )
@@ -73,3 +71,4 @@ async function calculateGas(contractId, methodName, args, depositAmount) {
 }
 
 exports.calculateGas = calculateGas;
+exports.keyStores = keyStores;

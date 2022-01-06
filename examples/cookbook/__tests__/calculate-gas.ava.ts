@@ -1,5 +1,5 @@
 import { workspace } from './utils'
-import { keyStores } from 'near-workspaces/node_modules/near-api-js';
+// import { keyStores } from 'near-workspaces/node_modules/near-api-js';
 
 workspace.test('calculate gas', async (test, { root, alice, status_message })=>{
    
@@ -19,6 +19,8 @@ workspace.test('calculate gas', async (test, { root, alice, status_message })=>{
         message: "Working on tests for near-api-js...",
     };
 
+    const keyStores = module.keyStores;
+
     let ks = new keyStores.InMemoryKeyStore()
     await ks.setKey('sandbox', alice.accountId, await alice.getKey());
 
@@ -28,19 +30,8 @@ workspace.test('calculate gas', async (test, { root, alice, status_message })=>{
 
     console.log(module.config)
 
-    console.log(await calculateGas(CONTRACT_ID, METHOD_NAME, args, ATTACHED_DEPOSIT))
+    let {totalTokensBurned, totalGasBurned} = await calculateGas(CONTRACT_ID, METHOD_NAME, args, ATTACHED_DEPOSIT);
+    console.log(totalTokensBurned);
+    test.true(totalTokensBurned > 0.0)
+    test.true(totalGasBurned > 1)
 })
-
-//investigate, (calculate-gas.js:35)
-/*
- Rejected promise returned by test. Reason:
-
-  Error (BorshError) {
-    fieldPath: [
-      'publicKey',
-    ],
-    originalMessage: 'Class PublicKey is missing in schema',
-    message: 'Class PublicKey is missing in schema: publicKey',
-  }
-
-*/
