@@ -1,6 +1,7 @@
 import { workspace } from './utils'
 import { providers } from 'near-api-js'
 import { keyStores } from 'near-workspaces/node_modules/near-api-js';
+import { captureError } from 'near-workspaces';
 
 //note: any ideas on negative test here?
 
@@ -18,4 +19,7 @@ workspace.test('verify signature', async (test, { root, alice, status_message })
     const { verifySignature } = module
 
     test.true(await verifySignature(alice.accountId))
+
+    let error = await captureError(() => verifySignature(alice.accountId + 'a'))
+    test.true(error.includes("Cannot read properties of null"))
 })
