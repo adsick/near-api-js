@@ -20,6 +20,5 @@ workspace.test('deploy contract', async (test, { root, alice, status_message }) 
     // now with wrong account id
 
     let result2 = await captureError(() => deployContract(alice.accountId + 'a', "__tests__/res/status_message.wasm"));
-    console.log(result)
-    test.true(result.includes("Can not sign transactions for account"))
+    test.true(result2.includes("Can not sign transactions for account"))
 })
