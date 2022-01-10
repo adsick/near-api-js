@@ -25,7 +25,6 @@ exports.config = {
 
 //usage
 // calculateGas(exports.CONTRACT_ID, exports.METHOD_NAME, args, exports.ATTACHED_DEPOSIT);
-calculateGas(exports.CONTRACT_ID, exports.METHOD_NAME, args, exports.ATTACHED_DEPOSIT);
 
 async function calculateGas(contractId, methodName, args, depositAmount) {
   const near = await connect(exports.config);
